@@ -1,0 +1,15 @@
+Install qemu-user and qemu-user-static in your main system:
+sudo apt install qemu-user qemu-user-static
+
+Create Docker containers:
+make
+docker build --rm -f Dockerfile.armhf -t rpi_armhf:latest .
+docker build --rm -f Dockerfile.arm64 -t rpi_arm64:latest .
+
+Enter Docker containers:
+docker run --rm -it rpi_armhf:latest
+docker run --rm -it rpi_arm64:latest
+
+Enter Docker containers with user home accesible:
+docker run --rm -it -v "$HOME":'/home/pi':Z rpi_armhf:latest
+docker run --rm -it -v "$HOME":'/home/pi':Z rpi_arm64:latest

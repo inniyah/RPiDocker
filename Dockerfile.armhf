@@ -1,0 +1,18 @@
+FROM scratch  
+ADD rootfs/2022-04-04-raspios-bullseye-armhf-lite.tgz /  
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN dpkg --add-architecture armhf \
+    && apt-get update \
+    && apt -y upgrade \
+    && apt-get -y install \
+        build-essential \
+        devscripts \
+        quilt \
+    && rm -rf /var/lib/apt/lists/*
+
+USER pi
+WORKDIR pi
+ENTRYPOINT ["/bin/bash" ]
+CMD []

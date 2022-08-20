@@ -1,0 +1,6 @@
+*.img
+*.tgz
+master
+cache
+tmp
+log
