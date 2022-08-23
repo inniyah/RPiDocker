@@ -11,7 +11,7 @@ LOSETUP=sudo losetup
 all: rootfs/$(IMG_ARMHF).tgz rootfs/$(IMG_ARM64).tgz
 
 master/2022-04-04-raspios-bullseye-armhf-lite.img.xz:
-	@mkdir -p '$(shell dirname '$@')'
+	@mkdir -vp '$(shell dirname '$@')'
 	cd '$(shell dirname '$@')' && \
 		wget 'https://downloads.raspberrypi.org/raspios_lite_armhf/images/raspios_lite_armhf-2022-04-07/$(shell basename '$@')'
 	cd '$(shell dirname '$@')' && \
@@ -20,7 +20,7 @@ master/2022-04-04-raspios-bullseye-armhf-lite.img.xz:
 		sha256sum --check '$(shell basename '$@').sha256'
 
 master/2022-04-04-raspios-bullseye-arm64-lite.img.xz:
-	@mkdir -p '$(shell dirname '$@')'
+	@mkdir -vp '$(shell dirname '$@')'
 	cd '$(shell dirname '$@')' && \
 		wget 'https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2022-04-07/$(shell basename '$@')'
 	cd '$(shell dirname '$@')' && \
@@ -29,28 +29,28 @@ master/2022-04-04-raspios-bullseye-arm64-lite.img.xz:
 		sha256sum --check '$(shell basename '$@').sha256'
 
 image/%.img: master/%.img.xz
-	@mkdir -p '$(shell dirname '$@')'
+	@mkdir -vp '$(shell dirname '$@')'
 	cd '$(shell dirname '$<')' && sha256sum --check '$(shell basename '$<').sha256'
 	xz --decompress --keep --stdout --verbose --threads=0 '$<' > '$@'
 	touch '$@'
 
 mnt/%: image/%.img
-	@mkdir -p '$@'
-	@-sudo umount -l '$(shell dirname '$@')/boot' 2>/dev/null || true
-	@-sudo umount -l '$(shell dirname '$@')' 2>/dev/null || true
+	@mkdir -vp '$@'
+	@-sudo umount -l '$@/boot' 2>/dev/null || true
+	@-sudo umount -l '$@' 2>/dev/null || true
 	@test ! -e '$@/boot' || rmdir '$@/boot'
 	@test ! -e '$@' || rmdir '$@'
-	mkdir -p '$@/boot'
+	mkdir -vp '$@/boot'
 	export LOSETUP_DEV="$$( $(LOSETUP) --show -f -P '$<' )" && \
 		sudo mount "$${LOSETUP_DEV}p2" '$@' && \
 		sudo mount "$${LOSETUP_DEV}p1" '$@/boot'
-	#~ mkdir -p cache/apt/archives
+	#~ mkdir -vp cache/apt/archives
 	#~ sudo mount --bind 'cache/apt/' '$@/var/cache/apt/'
 
 rootfs/%.tgz: mnt/%
-	@mkdir -p '$(shell dirname '$@')'
+	@mkdir -vp '$(shell dirname '$@')'
 
-	cd '$<' && sudo tar cvfz '$(shell realpath '$@')' .
+	cd '$<' && sudo tar cvfz '../../$@' . && sudo chown "$(shell id -u):$(shell id -g)" '../../$@'
 
 	#~ @-sudo umount -l '$</var/cache/apt/' 2>/dev/null || true
 	@-sudo umount -l '$</boot' 2>/dev/null || true
