@@ -3,9 +3,11 @@ ADD rootfs/2022-04-04-raspios-bullseye-arm64-lite.tgz /
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN dpkg --add-architecture armhf \
-    && apt-get update \
-    && apt -y upgrade \
+#~ RUN dpkg --add-architecture armhf \
+#~     && apt-get update \
+#~     && apt -y upgrade
+
+RUN apt-get update \
     && apt-get -y install \
         build-essential \
         devscripts \
