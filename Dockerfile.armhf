@@ -1,5 +1,5 @@
 FROM scratch  
-ADD rootfs/2022-04-04-raspios-bullseye-armhf-lite.tgz /  
+ADD rootfs/2023-02-21-raspios-bullseye-armhf-lite.tgz /
 
 ARG DEBIAN_FRONTEND=noninteractive
 
